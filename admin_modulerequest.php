@@ -211,11 +211,7 @@
         <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
           <h2 class="ml-lg-2">Manage Requests</h2>
         </div>
-        <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
-          <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
-		  <i class="material-icons">&#xE147;</i> <span>Add Subjects</span></a>
-          
-        </div>
+ 
       </div>
     </div>
     <?php
@@ -244,11 +240,10 @@ $result = mysqli_query($conn, $sql);
   <thead>
     <tr>
       <th>ID</th>
-      <th>Strand</th>
-      <th>Grade</th>
-      <th>Subjects</th>
-      <th>Day</th>
-      <th>Schedules</th>
+      <th>Teacher from</th>
+      <th>Type of content</th>
+      <th>Description</th>
+      <th>Lesson</th>
       <th>Actions</th>
       <th>Status</th>
     </tr>
@@ -260,12 +255,9 @@ $result = mysqli_query($conn, $sql);
       <td><?php echo $row['strand']?></td>
       <td><?php echo $row['grade']; ?></td>
       <td><?php echo $row['subjects']; ?></td>
-      <td><?php echo $row['day']; ?></td>
+
       <td><?php echo $row['schedules'] ?></td>
       <td>
-            <a href="admin_subject_edit.php?subject_id=<?php echo $row['subject_id']?>"class="confirm">
-                <i class="material-icons" data-toggle="tooltip" title="Edit">create</i>
-            </a>
             <a href="admin_subject_activate.php?subject_id=<?php echo $row['subject_id']?>"class="confirm">
                 <i class="material-icons" data-toggle="tooltip" title="Confirm">&#xE5CA;</i>
             </a>
@@ -276,9 +268,9 @@ $result = mysqli_query($conn, $sql);
             <td>
             <?php
             if($row['status'] == 1){
-              echo '<span class="active">ACTIVE</span>';
+              echo '<span class="confirm">CONFIRM</span>';
             } else {
-              echo '<span class="inactive">INACTIVE</span>';
+              echo '<span class="decline">DECLINE</span>';
             }
             ?>
             </td>

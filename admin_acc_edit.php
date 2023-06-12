@@ -19,8 +19,8 @@
 <body>
 <div class="wrapper rounded bg-white">
 
-<div class="h3">Edit Student Information</div>
-<p> You can add and edit the Student Information here.</p>
+<div class="h3">Edit Admin Information</div>
+<p> You can add and edit the Admin Information here.</p>
 
 <?php
 include 'dbcon.php';

@@ -18,8 +18,8 @@
 <body>
 <div class="wrapper rounded bg-white">
 
-<div class="h3">Add Student Account</div>
-<p> You can add Student account here.</p>
+<div class="h3">Add Admin Account</div>
+<p> You can add admin account here.</p>
 
 <?php
 include 'dbcon.php';

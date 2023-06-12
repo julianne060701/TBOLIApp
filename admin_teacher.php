@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-        <title>Admin dashboard</title>
+    <title>Admin dashboard</title>
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 	    <!-- Bootstrap CSS -->
@@ -18,25 +18,36 @@
 	    <!----css3---->
         <link rel="stylesheet" href="css/custom.css">
 		
+		
 		<!--google fonts -->
 	
 	    <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 	
-	
+
+        
 	<!--google material icon-->
       <link href="https://fonts.googleapis.com/css2?family=Material+Icons"rel="stylesheet">
-
       <style>
+      
+ 
+  /* Adjusted width for modal */
+  #addEmployeeModal .modal-dialog {
+    max-width: 800px;
+    width: 100%;
+    margin: auto;
+  }
   .active {
     font-size: 15px;
   }
+  
   .inactive {
     font-size: 15px;
   }
 
       </style>
+      
   </head>
   <body>
   
@@ -48,7 +59,7 @@
 		
 		<!-------------------------sidebar------------>
 		     <!-- Sidebar  -->
-		     <nav id="sidebar">
+             <nav id="sidebar">
             <div class="sidebar-header">
             <h3><img src="img/logoT.png" class="img-fluid"/><br>T'Boli</br></h3>
             </div>
@@ -82,7 +93,7 @@
                     <a href="admin_modulerequest.php"><i class="fas fa-user"></i><span>Module request</span></a>
                 </li>
                 
-              
+               
                 <li class="dropdown">
                     <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="material-icons">school</i> Reports
@@ -110,6 +121,8 @@
                 </li>           
             </ul>          
         </nav>
+		
+		
 		
 		
 		
@@ -167,7 +180,7 @@
                       </a>
                       <ul class="dropdown-menu small-menu">
                           <li>
-                            <a href="#">
+                          <a href="profile.php?user_id=<?php echo $_SESSION['user_id']?>">
                             <span class="material-icons">person_outline</span>Profile</a>
                           </li>
                           <li>
@@ -215,63 +228,68 @@
         </div>
         <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
           <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
-		  <i class="material-icons">&#xE147;</i> <span>Add Subjects</span></a>
-          
+		  <i class="material-icons">&#xE147;</i> <span>Add New Teacher</span></a>
+
         </div>
       </div>
     </div>
-    <?php
+  <?php
 include 'dbcon.php';
+$limit = 10;
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-
-$limit = 10; 
-$page = isset($_GET['page']) ? $_GET['page'] : 1; 
-
-$sqlCount = "SELECT COUNT(*) AS total FROM tbl_subjects
-             WHERE subject_id = 'subject_id'";
+$sqlCount = "SELECT COUNT(*) AS total FROM tbl_userinfo
+             JOIN tbl_user_level ON tbl_user_level.user_level_id = tbl_userinfo.user_id
+             WHERE tbl_user_level.level = 'STUDENT'";
 $resultCount = mysqli_query($conn, $sqlCount);
 $rowCount = mysqli_fetch_assoc($resultCount)['total'];
-
 $totalPages = ceil($rowCount / $limit);
-
 $offset = ($page - 1) * $limit;
 
-$sql = "SELECT * FROM tbl_subjects
+$sql = "SELECT tbl_userinfo.user_id, tbl_userinfo.firstname, tbl_userinfo.middlename, tbl_userinfo.lastname, tbl_userinfo.suffix, tbl_contactinfo.email, tbl_enrollment.userinfo_id, tbl_enrollment.admit_type, tbl_contactinfo.contact_num, tbl_enrollment.term, tbl_enrollment.lrn, tbl_enrollment.lsa,tbl_contactinfo.area, tbl_user_status.status, tbl_user_level.level
+        FROM tbl_userinfo
+        JOIN tbl_enrollment ON tbl_userinfo.user_id = tbl_enrollment.userinfo_id
+        JOIN tbl_user_status ON tbl_userinfo.user_id = tbl_user_status.userinfo_id
+        JOIN tbl_user_level ON tbl_userinfo.user_id = tbl_user_level.userinfo_id
+        JOIN tbl_contactinfo ON tbl_userinfo.user_id = tbl_contactinfo.userinfo_id
+        WHERE tbl_user_level.level = 'STUDENT'
         LIMIT $limit OFFSET $offset";
 
 $result = mysqli_query($conn, $sql);
 ?>
 
-<table class="table table-striped table-hover" id="teacher_table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Strand</th>
-      <th>Grade</th>
-      <th>Subjects</th>
-      <th>Day</th>
-      <th>Schedules</th>
-      <th>Actions</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php while ($row = mysqli_fetch_assoc($result)): ?>
-    <tr>
-      <td><?php echo $row['subject_id'] ?></td>
-      <td><?php echo $row['strand']?></td>
-      <td><?php echo $row['grade']; ?></td>
-      <td><?php echo $row['subjects']; ?></td>
-      <td><?php echo $row['day']; ?></td>
-      <td><?php echo $row['schedules'] ?></td>
-      <td>
-            <a href="admin_subject_edit.php?subject_id=<?php echo $row['subject_id']?>"class="confirm">
+      <table class="table table-striped table-hover" id="student_table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email Address</th>
+            <th>Contact Number</th>
+            <th>Area of Practices</th>
+            <th>Actions</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($result as $row): ?>  
+          <tr>
+            <td><?php echo $row['user_id'] ?></td>
+            <td><?php echo $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix']; ?></td>
+            <td><?php echo $row['email']; ?></td>
+            <td><?php echo $row['contact_num']; ?></td>
+            <td><?php echo $row['area']; ?></td>
+           
+            <td>
+            <a href="admin_add_teacher_acc.php?user_id=<?php echo $row['user_id']?>&userinfo_id=<?php echo $row['userinfo_id']?>" class="edit">
+                <i class="material-icons" data-toggle="tooltip" title="Add Teacher Account">add</i>
+            </a>
+            <a href="admin_teacher_edit.php?user_id=<?php echo $row['user_id']?>&userinfo_id=<?php echo $row['userinfo_id']?>" class="confirm">
                 <i class="material-icons" data-toggle="tooltip" title="Edit">create</i>
             </a>
-            <a href="admin_subject_activate.php?subject_id=<?php echo $row['subject_id']?>"class="confirm">
+            <a href="admin_student_activate.php?user_id=<?php echo $row['user_id']?>" class="confirm">
                 <i class="material-icons" data-toggle="tooltip" title="Confirm">&#xE5CA;</i>
             </a>
-            <a href="admin_subject_deactivate.php?subject_id=<?php echo $row['subject_id']?>"class="decline">
+            <a href="admin_student_deactivate.php?user_id=<?php echo $row['user_id']?>" class="decline">
                 <i class="material-icons" data-toggle="tooltip" title="Decline">&#xE5CD;</i>
             </a>
             </td>
@@ -284,10 +302,10 @@ $result = mysqli_query($conn, $sql);
             }
             ?>
             </td>
-    </tr>
-    <?php endwhile; ?>
-  </tbody>
-</table>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
 
 <div class="clearfix">
 <div class="hint-text">Showing <b><?php echo mysqli_num_rows($result) ?></b> out of <b><?php echo mysqli_num_rows($result) ?></b> entries</div>
@@ -313,96 +331,132 @@ $result = mysqli_query($conn, $sql);
 </div>
 </div>
 
-<!-- Modal -->
+<!-- Add New Student Modal -->
 <div id="addEmployeeModal" class="modal fade">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form action="admin_subject_add.php" method="POST">
-          <div class="modal-header">
-            <h5 class="modal-title">Add Subjects</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="admin_add_account.php" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Teacher</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="error" id="error" style="display: none;"></div>
+          <div>
+            <label style="margin-bottom: 20px;">Personal Information</label>
           </div>
-          <div class="modal-body">
-            <div class="error" id="error" style="display: none;"></div>
-            <div>
-            <label style="margin-bottom: 20px;">Subject Information</label>
-            </div>
-            <div class="row">
+          <div class="row">
             <div class="col-md-6 mt-md-0 mt-3">
-                  <label>Strand<span style="color: red;">*</span></label>
-                  <select id="sub" name="strand" required>
-                    <option value="" selected disabled>Select Strand</option>
-                    <option value="abm">ABM</option>
-                    <option value="humss">Humss</option>
-                    <option value="stem">Stem</option>
-                    <option value="eim">EIM</option>
-                    <option value="fbs">FBS</option>
-                    <option value="smaw">Smaw</option>
-                    <option value="ict">ICT</option>
-                  </select>
+              <div class="form-group">
+                <label>First Name <span style="color: red;">*</span></label>
+                <input type="text" class="form-control" name="firstname" required>
+              </div>
             </div>
             <div class="col-md-6 mt-md-0 mt-3">
-                  <label>Grade<span style="color: red;">*</span></label>
-                  <select id="sub" name="grade" required>
-                    <option value="" selected disabled>Select Grade</option>
-                    <option value="11">Grade 11</option>
-                    <option value="12">Grade 12</option>
-                    </select>
+              <div class="form-group">
+                <label>Middle Name</label>
+                <input type="text" class="form-control" name="middlename">
+              </div>
             </div>
             <div class="col-md-6 mt-md-0 mt-3">
-                <label>Subjects<span style="color: red;">*</span></label>
-                <input type="text" style="width: 338px" class="form-control" name="subject" required>
-            </div>
-            <div>
-            <label style="margin-bottom: 20px;">Schedule</label>
-            </div>
-            <div class="col-md-6 mt-md-0 mt-3">
-                  <label>Day<span style="color: red;">*</span></label>
-                  <select id="sub" name="day" required>
-                    <option value="" selected disabled>Select Day</option>
-                    <option value="monday">Monday</option>
-                    <option value="tuesday">Tuesday</option>
-                    <option value="wednesday">Wednesday</option>
-                    <option value="thursday">Thursday</option>
-                    <option value="friday">Friday</option>
-                  </select>
+              <div class="form-group">
+                <label>Last Name <span style="color: red;">*</span></label>
+                <input type="text" class="form-control" name="lastname" required>
+              </div>
             </div>
             <div class="col-md-6 mt-md-0 mt-3">
-                <label>Time<span style="color: red;">*</span></label>
-                <input type="time" class="form-control" name="schedules">
+              <div class="form-group">
+                <label>Suffix Name</label>
+                <input type="text" class="form-control" name="suffixname">
+              </div>
             </div>
-      </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary" name="btnAdd">Add</button>
+          <div class="row">
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>Age <span style="color: red;">*</span></label>
+                <input type="number" class="form-control" name="age" required>
+              </div>
+            </div>
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>Birthday <span style="color: red;">*</span></label>
+                <input type="date" class="form-control" name="birthday" required>
+              </div>
+            </div>
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>Gender <span style="color: red;">*</span></label>
+                <select class="form-control" name="gender" required>
+                  <option value="" selected hidden>Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="prefer">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
-    </div>
-  </div>		
-		   
-			  </div>
-			 
-			 
-			 <!---footer---->
-			 
-			 
-		</div>
-		
 
+          
+          <div class="row">
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>Email <span style="color: red;">*</span></label>
+                <input type="email" class="form-control" name="email" required>
+              </div>
+            </div>
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>Contact Number <span style="color: red;">*</span></label>
+                <input type="tel" class="form-control" name="contact_number" required>
+              </div>
+            </div>
+            <div class="h3">Current Address</div>
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>Street <span style="color: red;">*</span></label>
+                <input type="text" class="form-control" name="street" required>
+              </div>
+            </div>
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>Barangay <span style="color: red;">*</span></label>
+                <input type="text" class="form-control" name="barangay" required>
+              </div>
+            </div>
+            <div class="col-md-6 mt-md-0 mt-3">
+              <div class="form-group">
+                <label>City <span style="color: red;">*</span></label>
+                <input type="text" class="form-control" name="city" required>
+              </div>
+            </div>
+          </div>
+         
+
+        </div><br>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" name="btnAdd">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
-</div>
+
 
 
 <!----------html code compleate----------->
 
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
 <script>
 // Get the input element, button, and table
 var input = document.getElementById("searchInput");
 var button = document.getElementById("searchButton");
-var table = document.getElementById("teacher_table");
+var table = document.getElementById("student_table");
 
 // Add event listener for the button click
 button.addEventListener("click", function(event) {
@@ -434,10 +488,6 @@ button.addEventListener("click", function(event) {
 });
 </script>
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-
   
      <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -460,10 +510,6 @@ button.addEventListener("click", function(event) {
 		   });
 		  
 		});
-		
-    function clearValue(input) {
-    input.value = '';
-  }
 </script>
   
   

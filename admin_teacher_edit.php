@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student Information</title>
+    <title>Edit Teacher Information</title>
     <link rel="stylesheet" href="css/enroll.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js">
@@ -19,8 +19,8 @@
 <body>
 <div class="wrapper rounded bg-white">
 
-<div class="h3">Edit Student Information</div>
-<p> You can add and edit the Student Information here.</p>
+<div class="h3">Edit Teacher Information</div>
+<p> You can add and edit the Teacher Information here.</p>
 
 <?php
 include 'dbcon.php';

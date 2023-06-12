@@ -228,43 +228,43 @@
         </div>
         <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
           <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
-		  <i class="material-icons">&#xE147;</i> <span>Add New Student</span></a>
+		  <i class="material-icons">&#xE147;</i> <span>Add New Admin</span></a>
 
         </div>
       </div>
     </div>
-    <?php
-      include 'dbcon.php';
-      $limit = 10; 
-      $page = isset($_GET['page']) ? $_GET['page'] : 1;
+  <?php
+include 'dbcon.php';
+$limit = 10;
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-      $sqlCount = "SELECT COUNT(*) AS total FROM tbl_userinfo
+$sqlCount = "SELECT COUNT(*) AS total FROM tbl_userinfo
              JOIN tbl_user_level ON tbl_user_level.user_level_id = tbl_userinfo.user_id
              WHERE tbl_user_level.level = 'STUDENT'";
-      $resultCount = mysqli_query($conn, $sqlCount);
-      $rowCount = mysqli_fetch_assoc($resultCount)['total'];
-      $totalPages = ceil($rowCount / $limit);
-      $offset = ($page - 1) * $limit;
+$resultCount = mysqli_query($conn, $sqlCount);
+$rowCount = mysqli_fetch_assoc($resultCount)['total'];
+$totalPages = ceil($rowCount / $limit);
+$offset = ($page - 1) * $limit;
 
-      $sql = "SELECT tbl_userinfo.user_id, tbl_userinfo.firstname, tbl_userinfo.middlename, tbl_userinfo.lastname, tbl_userinfo.suffix, tbl_enrollment.userinfo_id, tbl_enrollment.admit_type, tbl_enrollment.grade, tbl_enrollment.program, tbl_enrollment.term, tbl_enrollment.lrn, tbl_enrollment.lsa, tbl_user_status.status, tbl_user_level.level
-              FROM tbl_userinfo
-              JOIN tbl_enrollment ON tbl_userinfo.user_id = tbl_enrollment.userinfo_id
-              JOIN tbl_user_status ON tbl_userinfo.user_id = tbl_user_status.userinfo_id
-              JOIN tbl_user_level ON tbl_userinfo.user_id = tbl_user_level.userinfo_id
-              WHERE tbl_user_level.level = 'STUDENT'
-              LIMIT $limit OFFSET $offset";
+$sql = "SELECT tbl_userinfo.user_id, tbl_userinfo.firstname, tbl_userinfo.middlename, tbl_userinfo.lastname, tbl_userinfo.suffix, tbl_contactinfo.email, tbl_enrollment.userinfo_id, tbl_enrollment.admit_type, tbl_contactinfo.contact_num, tbl_enrollment.term, tbl_enrollment.lrn, tbl_enrollment.lsa, tbl_user_status.status, tbl_user_level.level
+        FROM tbl_userinfo
+        JOIN tbl_enrollment ON tbl_userinfo.user_id = tbl_enrollment.userinfo_id
+        JOIN tbl_user_status ON tbl_userinfo.user_id = tbl_user_status.userinfo_id
+        JOIN tbl_user_level ON tbl_userinfo.user_id = tbl_user_level.userinfo_id
+        JOIN tbl_contactinfo ON tbl_userinfo.user_id = tbl_contactinfo.userinfo_id
+        WHERE tbl_user_level.level = 'STUDENT'
+        LIMIT $limit OFFSET $offset";
 
-      $result = mysqli_query($conn, $sql);
-      ?>
+$result = mysqli_query($conn, $sql);
+?>
 
       <table class="table table-striped table-hover" id="student_table">
         <thead>
           <tr>
             <th>ID</th>
             <th>Full Name</th>
-            <th>Grade</th>
-            <th>Program/Strand</th>
-            <th>LRN</th>
+            <th>Email Address</th>
+            <th>Contact Number</th>
             <th>Actions</th>
             <th>Status</th>
           </tr>
@@ -274,14 +274,14 @@
           <tr>
             <td><?php echo $row['user_id'] ?></td>
             <td><?php echo $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix']; ?></td>
-            <td><?php echo $row['grade']; ?></td>
-            <td><?php echo $row['program']; ?></td>
-            <td><?php echo $row['lrn'] ?></td>
+            <td><?php echo $row['email']; ?></td>
+            <td><?php echo $row['contact_num']; ?></td>
+           
             <td>
-            <a href="admin_student_add_account.php?user_id=<?php echo $row['user_id']?>&userinfo_id=<?php echo $row['userinfo_id']?>" class="edit">
-                <i class="material-icons" data-toggle="tooltip" title="Add Student Account">add</i>
+            <a href="admin_add_account.php?user_id=<?php echo $row['user_id']?>&userinfo_id=<?php echo $row['userinfo_id']?>" class="edit">
+                <i class="material-icons" data-toggle="tooltip" title="Add Admin Account">add</i>
             </a>
-            <a href="admin_student_edit.php?user_id=<?php echo $row['user_id']?>&userinfo_id=<?php echo $row['userinfo_id']?>" class="confirm">
+            <a href="admin_acc_edit.php?user_id=<?php echo $row['user_id']?>&userinfo_id=<?php echo $row['userinfo_id']?>" class="confirm">
                 <i class="material-icons" data-toggle="tooltip" title="Edit">create</i>
             </a>
             <a href="admin_student_activate.php?user_id=<?php echo $row['user_id']?>" class="confirm">
@@ -333,9 +333,9 @@
 <div id="addEmployeeModal" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="admin_student_add.php" method="POST">
+      <form action="admin_add_account.php" method="POST">
         <div class="modal-header">
-          <h5 class="modal-title">Add Student</h5>
+          <h5 class="modal-title">Add Admin</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -395,7 +395,7 @@
             </div>
           </div>
 
-          <div class="h3">Contact Information</div>
+          
           <div class="row">
             <div class="col-md-6 mt-md-0 mt-3">
               <div class="form-group">
@@ -409,6 +409,7 @@
                 <input type="tel" class="form-control" name="contact_number" required>
               </div>
             </div>
+            <div class="h3">Current Address</div>
             <div class="col-md-6 mt-md-0 mt-3">
               <div class="form-group">
                 <label>Street <span style="color: red;">*</span></label>
@@ -428,68 +429,7 @@
               </div>
             </div>
           </div>
-
-          <div class="h3">Enrollment</div>
-          <div class="row">
-            <div class="col-md-6 mt-md-0 mt-3">
-              <div class="form-group">
-                <label>Admit Type <span style="color: red;">*</span></label>
-                <select class="form-control" name="admit" required>
-                  <option value="" selected hidden>Choose Option</option>
-                  <option value="old">Old Student</option>
-                  <option value="new">New Student</option>
-                  <option value="transferee">Transferee</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6 mt-md-0 mt-3">
-              <div class="form-group">
-                <label>Grade <span style="color: red;">*</span></label>
-                <select class="form-control" name="grade" required>
-                  <option value="" selected hidden>Choose Option</option>
-                  <option value="11">Grade 11</option>
-                  <option value="12">Grade 12</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6 mt-md-0 mt-3">
-              <div class="form-group">
-                <label>Strand <span style="color: red;">*</span></label>
-                <select class="form-control" name="strand" required>
-                  <option value="" selected hidden>Choose Option</option>
-                  <option value="abm">ABM</option>
-                  <option value="humss">HUMSS</option>
-                  <option value="stem">STEM</option>
-                  <option value="eim">EIM</option>
-                  <option value="fbs">FBS</option>
-                  <option value="smaw">SMAW</option>
-                  <option value="ict">ICT</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6 mt-md-0 mt-3">
-              <div class="form-group">
-                <label>Term <span style="color: red;">*</span></label>
-                <select class="form-control" name="term" required>
-                  <option value="" selected hidden>Choose Option</option>
-                  <option value="1st">1st Term</option>
-                  <option value="2nd">2nd Term</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6 mt-md-0 mt-3">
-              <div class="form-group">
-                <label>LRN <span style="color: red;">*</span></label>
-                <input type="number" class="form-control" name="lrn" required>
-              </div>
-            </div>
-            <div class="col-md-6 mt-md-0 mt-3">
-              <div class="form-group">
-                <label>Last School Attended</label>
-                <input type="text" class="form-control" name="last" placeholder="For transferee only">
-              </div>
-            </div>
-          </div>
+         
 
         </div><br>
         <div class="modal-footer">
