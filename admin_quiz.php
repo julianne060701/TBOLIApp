@@ -1,13 +1,6 @@
-<!-- <?php 
+<!-- <?php
       session_start();
       $user_id = $_SESSION['user_id'];
-
-      if (isset($_GET['logout'])) {
-      session_unset();
-      session_destroy();
-      header("Location: homepage.php?Logout");
-      exit();
-      }
 ?> -->
 <!doctype html>
 <html lang="en">
@@ -16,7 +9,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-        <title>Quiz</title>
+    <title>Admin dashboard</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 	    <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -30,10 +25,29 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 	
-	
+
+        
 	<!--google material icon-->
       <link href="https://fonts.googleapis.com/css2?family=Material+Icons"rel="stylesheet">
+      <style>
+      
+ 
+  /* Adjusted width for modal */
+  #addEmployeeModal .modal-dialog {
+    max-width: 800px;
+    width: 100%;
+    margin: auto;
+  }
+  .active {
+    font-size: 15px;
+  }
+  
+  .inactive {
+    font-size: 15px;
+  }
 
+      </style>
+      
   </head>
   <body>
   
@@ -47,7 +61,7 @@
 		     <!-- Sidebar  -->
              <nav id="sidebar">
             <div class="sidebar-header">
-                <h3><img src="img/logoT.png" class="img-fluid"/><br>T'Boli</br></h3>
+            <h3><img src="img/logoT.png" class="img-fluid"/><br>T'Boli</br></h3>
             </div>
             <ul class="list-unstyled components">
 			<li  class="active">
@@ -79,7 +93,7 @@
                     <a href="admin_modulerequest.php"><i class="fas fa-user"></i><span>Module request</span></a>
                 </li>
                 
-              
+               
                 <li class="dropdown">
                     <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="material-icons">school</i> Reports
@@ -134,9 +148,18 @@
 
                     <!-- Start XP Col -->
                     <div class="col-md-5 col-lg-3 order-3 order-md-2">
-                        <div class="xp-searchbar">
-                           
-                        </div>
+                      <div class="xp-searchbar">
+                        <form>
+                          <div class="input-group">
+                            <input type="search" class="form-control" placeholder="Search" id="searchInput">
+                            <div class="input-group-append">
+                              <button class="btn" type="submit" id="searchButton">
+                                <i class="fas fa-search"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
                     </div>
                     <!-- End XP Col -->
 
@@ -157,11 +180,11 @@
                       </a>
                       <ul class="dropdown-menu small-menu">
                           <li>
-                            <a href="profile.php?user_id=<?php echo $_SESSION['user_id']?>">
+                          <a href="profile.php?user_id=<?php echo $_SESSION['user_id']?>">
                             <span class="material-icons">person_outline</span>Profile</a>
                           </li>
                           <li>
-                              <a href="homepage.php?logout=true"><span class="material-icons">logout</span>Logout</a>
+                              <a href="admin_dashboard.php?logout=true"><span class="material-icons">logout</span>Logout</a>
                           </li>
                       </ul>
                           </li>
@@ -183,9 +206,8 @@
 		   
 		   
 		   <!--------main-content------------->
-		  <!--------main-content------------->
 		   
-          <div class="main-content">
+		   <div class="main-content">
 			  <div class="row">
 			    
 				<div class="col-md-12">
@@ -202,11 +224,12 @@
     ?>
       <div class="row">
         <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
-          <h2 class="ml-lg-2">Manage Quiz</h2>
+          <h2 class="ml-lg-2">Manage Content/Lesson</h2>
         </div>
         <div class="col-sm-6 p-0 d-flex justify-content-lg-end justify-content-center">
-          <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
-		  <i class="material-icons">&#xE147;</i> <span>Add New Quiz</span></a>
+        <a href="#fileUploadModal" class="btn btn-success" data-toggle="modal">
+
+		  <i class="material-icons">&#xE147;</i> <span>Upload Files</span></a>
 
         </div>
       </div>
@@ -244,68 +267,189 @@
             <th>Category</th>
             <th>Module</th>
             <th>Points</th>
+            <th>Actions</th>
             <th>Status</th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody>
             <tr>
                 <td>1</td>
-                <td>Survival Quiz</td>
-                <td>A</td>
                 <td>Letters</td>
+                <td>Begginer</td>
+                <td>A</td>
                 <td>Module 01</td>
                 <td>10</td>
-                <td>Give</td>
                 <td>
-                    <a href="#" class="view"><i class="fa fa-eye"></i></a>
-                    <a href="#" class="edit"><i class="fa fa-pencil"></i></a>
-                </td>
+    <a href="admin_subject_activate.php?subject_id=<?php echo $row['subject_id'] ?>" class="confirm">
+        <i class="material-icons" data-toggle="tooltip" title="Confirm">&#xE5CA;</i>
+    </a>
+    <a href="admin_subject_deactivate.php?subject_id=<?php echo $row['subject_id'] ?>" class="decline">
+        <i class="material-icons" data-toggle="tooltip" title="Decline">&#xE5CD;</i>
+    </a>
+</td>
+<td></td>
+
             </tr>
             <tr>
                 <td>2</td>
-                <td>Basic Quiz</td>
-                <td>Finish</td>
                 <td>Numbers</td>
+                <td>Advance</td>
+                <td>01</td>
                 <td>Module 01</td>
                 <td>15</td>
-                <td>Give</td>
                 <td>
-                    <a href="#" class="view"><i class="fa fa-eye"></i></a>
-                    <a href="#" class="edit"><i class="fa fa-pencil"></i></a>
-                </td>
-            </tr>
-            </tr>
-            <tr>
+    <a href="admin_subject_activate.php?subject_id=<?php echo $row['subject_id'] ?>" class="confirm">
+        <i class="material-icons" data-toggle="tooltip" title="Confirm">&#xE5CA;</i>
+    </a>
+    <a href="admin_subject_deactivate.php?subject_id=<?php echo $row['subject_id'] ?>" class="decline">
+        <i class="material-icons" data-toggle="tooltip" title="Decline">&#xE5CD;</i>
+    </a>
+</td>
+<td></td>
+
+<tr>
                 <td>3</td>
-                <td>Advance Quiz</td>
-                <td>N/A</td>
-                <td>Letters</td>
-                <td>Module 02</td>
-                <td>10</td>
-                <td>Not yet give</td>
+                <td>Practices</td>
+                <td>Intermediate</td>
+                <td>Culture</td>
+                <td>Module 01</td>
+                <td>20</td>
                 <td>
-                    <a href="#" class="view"><i class="fa fa-eye"></i></a>
-                    <a href="#" class="edit"><i class="fa fa-pencil"></i></a>
-                </td>
+    <a href="admin_subject_activate.php?subject_id=<?php echo $row['subject_id'] ?>" class="confirm">
+        <i class="material-icons" data-toggle="tooltip" title="Confirm">&#xE5CA;</i>
+    </a>
+    <a href="admin_subject_deactivate.php?subject_id=<?php echo $row['subject_id'] ?>" class="decline">
+        <i class="material-icons" data-toggle="tooltip" title="Decline">&#xE5CD;</i>
+    </a>
+</td>
+<td></td>
+
+            </tr>
+
             </tr>
         </tbody>
-      </table>
-        
+    </table>
+
+<div class="clearfix">
+<div class="hint-text">Showing <b><?php echo mysqli_num_rows($result) ?></b> out of <b><?php echo mysqli_num_rows($result) ?></b> entries</div>
+  <ul class="pagination">
+    <?php if ($page > 1): ?>
+      <li class="page-item"><a href="?page=<?php echo ($page - 1) ?>" class="page-link">Previous</a></li>
+    <?php else: ?>
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    <?php endif; ?>
+
+    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+      <li class="page-item <?php if ($i == $page) echo 'active' ?>">
+        <a href="?page=<?php echo $i ?>" class="page-link"><?php echo $i ?></a>
+      </li>
+    <?php endfor; ?>
+
+    <?php if ($page < $totalPages): ?>
+      <li class="page-item"><a href="?page=<?php echo ($page + 1) ?>" class="page-link">Next</a></li>
+    <?php else: ?>
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    <?php endif; ?>
+  </ul>
 </div>
 </div>
 
-<!----------html code compleate----------->
+<!-- Upload Files Modal -->
+<div class="modal fade" id="fileUploadModal" tabindex="-1" aria-labelledby="fileUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileUploadModalLabel">Upload Files</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="upload-form" enctype="multipart/form-data" method="POST">
+                        <div class="mb-3">
+                            <label for="content-type" class="form-label">Type of Content:</label>
+                            <select class="form-control" id="content-type" name="content">
+                                <option value="">Select type of content</option>
+                                <option value="Letters">Letters</option>
+                                <option value="Numbers">Numbers</option>
+                                <option value="Practices">Practices</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description:</label>
+                            <input type="text" class="form-control" id="description" name="description">
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category:</label>
+                            <input type="text" class="form-control" id="category" name="category">
+                        </div>
+                        <div class="mb-3">
+                            <label for="module" class="form-label">Module:</label>
+                            <input type="text" class="form-control" id="module" name="module">
+                        </div>
+                        <div class="mb-3">
+                            <label for="points" class="form-label">Points:</label>
+                            <input type="text" class="form-control" id="points" name="points">
+                        </div>
+                        <div class="mb-3">
+                            <label for="file" class="form-label">File:</label>
+                            <input type="file" class="form-control" id="file" name="file">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="upload">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
 
 
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ken..."></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+       // Add Student button click event
+       $("#add-student").click(function(e) {
+            e.preventDefault();
+            // Add your logic to handle the click event of the "Add Student" button
+            $("#fileUploadModal").modal("show");
+        });
+</script>
+<script>
+// Get the input element, button, and table
+var input = document.getElementById("searchInput");
+var button = document.getElementById("searchButton");
+var table = document.getElementById("student_table");
 
 
 
+  // Loop through all table rows and hide those that don't match the search query
+  for (var i = 0; i < rows.length; i++) {
+    var cells = rows[i].getElementsByTagName("td");
+    var found = false;
 
-  
-     <!-- Optional JavaScript -->
+    for (var j = 0; j < cells.length; j++) {
+      var cellValue = cells[j].textContent || cells[j].innerText;
+
+      if (cellValue.toLowerCase().indexOf(filter) > -1) {
+        found = true;
+        break;
+      }
+    }
+
+    if (found) {
+      rows[i].style.display = "";
+    } else {
+      rows[i].style.display = "none";
+    }
+  }
+</script>
+
+
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
    <script src="js/jquery-3.3.1.slim.min.js"></script>
    <script src="js/popper.min.js"></script>
@@ -326,12 +470,7 @@
 		   });
 		  
 		});
-		
 </script>
-  
-  
-
-
 
   </body>
   
